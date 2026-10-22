@@ -47,7 +47,7 @@
   <div class="notice"><strong>How this API is hosted:</strong> ContractorOS is deployed per customer —
   the API runs with each ContractorOS deployment (the native Android app and web office talk to it).
   There is no public sandbox host at this time; this page documents the API surface of the product so
-  integration partners can evaluate it. Every route sits under <code>/api</code> and, except the three
+  integration partners can evaluate it. Routes sit under <code>/api</code> (the health check and authenticated file delivery sit at the root) and, except the
   marked <em>public</em>, requires a JWT bearer token from <code>POST /api/auth/login</code>
   (OAuth2 password flow).</div>
 
