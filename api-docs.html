@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ContractorOS API — Documentation</title>
+<meta name="description" content="ContractorOS API documentation: the endpoint surface of the voice-first operating system for contractors.">
+<style>
+  :root { --gold:#d4af37; --gold-dim:#9a7b24; --bg:#0b0b0d; --panel:#141416; --line:#2a2a2e; --text:#e8e6df; --muted:#a49f8f; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:Georgia,'Times New Roman',serif; }
+  header { border-bottom:3px solid var(--gold); padding:34px 22px 26px; text-align:center; }
+  header .brand { color:var(--gold); letter-spacing:3px; font-size:13px; text-transform:uppercase; }
+  header h1 { margin:8px 0 6px; font-size:34px; color:#fff; }
+  header p { color:var(--muted); margin:0 auto; max-width:720px; line-height:1.55; }
+  main { max-width:980px; margin:0 auto; padding:26px 20px 60px; }
+  .notice { background:var(--panel); border:1px solid var(--gold-dim); border-left:5px solid var(--gold);
+             padding:14px 18px; margin:22px 0; line-height:1.55; }
+  .notice strong { color:var(--gold); }
+  h2 { color:var(--gold); border-bottom:1px solid var(--line); padding-bottom:6px; margin-top:38px; font-size:22px; }
+  h2 .count { color:var(--muted); font-size:14px; }
+  .blurb { color:var(--muted); line-height:1.55; margin:8px 0 12px; }
+  table { width:100%; border-collapse:collapse; font-size:14.5px; }
+  td { padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .path { font-family:ui-monospace,Menlo,Consolas,monospace; color:#fff; white-space:nowrap; }
+  .m { font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:bold; font-size:12px;
+        padding:2px 7px; border-radius:3px; color:#0b0b0d; }
+  .m.get { background:#7fb069; } .m.post { background:var(--gold); }
+  .m.put { background:#70a1ff; } .m.patch { background:#c56cf0; } .m.del { background:#e55039; color:#fff; }
+  .pub { color:var(--gold); font-size:12px; border:1px solid var(--gold-dim); padding:0 5px; border-radius:3px; }
+  nav ul { columns:2; line-height:1.9; }
+  nav a { color:var(--gold); text-decoration:none; }
+  code { font-family:ui-monospace,Menlo,Consolas,monospace; background:var(--panel); padding:1px 5px; }
+  footer { border-top:1px solid var(--line); color:var(--muted); text-align:center; padding:22px; font-size:13.5px; }
+  a { color:var(--gold); }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ContractorOS</div>
+  <h1>API Documentation</h1>
+  <p>The endpoint surface of ContractorOS — the voice-first operating system for contractors,
+     built by a working superintendent and live on real jobs today. API version 0.2.0 ·
+     169 endpoints.</p>
+</header>
+<main>
+  <div class="notice"><strong>How this API is hosted:</strong> ContractorOS is deployed per customer —
+  the API runs with each ContractorOS deployment (the native Android app and web office talk to it).
+  There is no public sandbox host at this time; this page documents the API surface of the product so
+  integration partners can evaluate it. Every route sits under <code>/api</code> and, except the three
+  marked <em>public</em>, requires a JWT bearer token from <code>POST /api/auth/login</code>
+  (OAuth2 password flow).</div>
+
+  <div class="notice"><strong>Integration status — Trimble ProjectSight:</strong> the connector to
+  ProjectSight is <strong>planned, not yet built</strong>. The daily-log, document, and punch-item
+  endpoints documented below are the ContractorOS side of that planned sync — the field record that
+  will flow into the project system of record once the connector is built through Trimble's
+  Technology Partner sandbox and certification path. No ProjectSight endpoints exist in ContractorOS yet,
+  and none are documented here.</div>
+
+  <nav><h2>Endpoint groups</h2><ul><li><a href="#authentication">Authentication</a></li><li><a href="#projects">Projects</a></li><li><a href="#daily-logs">Daily Logs</a></li><li><a href="#documents-and-files">Documents &amp; Files</a></li><li><a href="#takeoffs-and-estimates">Takeoffs &amp; Estimates</a></li><li><a href="#calculators">Calculators</a></li><li><a href="#time-clock">Time Clock</a></li><li><a href="#approvals">Approvals</a></li><li><a href="#tasks-and-punch-lists">Tasks &amp; Punch Lists</a></li><li><a href="#ai-crew">AI Crew</a></li></ul></nav>
+
+<section id="authentication"><h2>Authentication <span class="count">4</span></h2><p class="blurb">Account signup, sign-in, and password setup. Sign-in returns a JWT bearer token used by every other endpoint.</p><table><tr><td><span class="m post">POST</span></td><td class="path">/api/auth/login</td><td>Login <span class="pub">public</span></td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/auth/me</td><td>Me</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/auth/set-password-with-token</td><td>Set Password With Token <span class="pub">public</span></td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/auth/signup</td><td>Signup <span class="pub">public</span></td></tr></table></section>
+<section id="projects"><h2>Projects <span class="count">7</span></h2><p class="blurb">Project records and their phases — the container everything else files under.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects</td><td>List Projects</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects</td><td>Create Project</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}</td><td>Get Project</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}</td><td>Update Project</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}</td><td>Delete Project</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/phases</td><td>Get Project Phases</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/phases/steps/{step_id}</td><td>Update Project Phase Step</td></tr></table></section>
+<section id="daily-logs"><h2>Daily Logs <span class="count">6</span></h2><p class="blurb">Daily field logs, including the voice-dictated entries the app secretary reads back before saving.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/dailylogs</td><td>List Logs</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/dailylogs</td><td>Add Log</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/dailylogs/{log_id}</td><td>Get Log</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/dailylogs/{log_id}</td><td>Update Log</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/dailylogs/{log_id}</td><td>Delete Log</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/dailylogs/{log_id}/report</td><td>Log Report</td></tr></table></section>
+<section id="documents-and-files"><h2>Documents &amp; Files <span class="count">12</span></h2><p class="blurb">Job documents and photos, authenticated file delivery, the versioned drawing register, and photo annotations.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/documents</td><td>List Documents</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/documents</td><td>Log Document</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/documents/presign</td><td>Get Upload Url</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/documents/upload</td><td>Upload Document</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/job-files/{file_path}</td><td>Serve Job File</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/drawings</td><td>List Drawings</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/drawings</td><td>Register Drawing</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/drawings/{drawing_id}</td><td>Delete Drawing</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/drawings/{drawing_id}/make-current</td><td>Make Current</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/documents/{document_id}/annotations</td><td>List Annotations</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/documents/{document_id}/annotations</td><td>Add Annotation</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/documents/{document_id}/annotations/{annotation_id}</td><td>Delete Annotation</td></tr></table></section>
+<section id="takeoffs-and-estimates"><h2>Takeoffs &amp; Estimates <span class="count">33</span></h2><p class="blurb">Quantity takeoffs, estimates with line items and totals, and the bid builder.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/takeoffs</td><td>List Takeoffs</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/takeoffs</td><td>Create Takeoff</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/takeoffs/concrete-slab</td><td>Create Concrete Slab</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/takeoffs/items/{item_id}</td><td>Update Item</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/takeoffs/items/{item_id}</td><td>Delete Item</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/takeoffs/sheets/{sheet_id}</td><td>Calibrate Sheet</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/takeoffs/sheets/{sheet_id}</td><td>Delete Sheet</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/takeoffs/{takeoff_id}</td><td>Get Takeoff</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/takeoffs/{takeoff_id}</td><td>Update Takeoff</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/takeoffs/{takeoff_id}</td><td>Delete Takeoff</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/takeoffs/{takeoff_id}/export</td><td>Export Csv</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/takeoffs/{takeoff_id}/items</td><td>Add Item</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/takeoffs/{takeoff_id}/items</td><td>List Items</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/takeoffs/{takeoff_id}/order-ticket</td><td>Order Ticket</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/takeoffs/{takeoff_id}/render</td><td>Render Pdf</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/takeoffs/{takeoff_id}/sheets</td><td>Add Sheet</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/takeoffs/{takeoff_id}/sheets</td><td>List Sheets</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/takeoffs/{takeoff_id}/to-estimate</td><td>To Estimate</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/takeoffs/{takeoff_id}/upload</td><td>Get Sheet Upload Url</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/estimates</td><td>List Estimates</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/estimates</td><td>Create Estimate</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/estimates/{est_id}</td><td>Update Estimate</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/estimates/{est_id}</td><td>Delete Estimate</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/estimates/{est_id}/duplicate</td><td>Duplicate Estimate</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/estimates/{est_id}/items</td><td>Add Item</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/estimates/{est_id}/items/{item_id}</td><td>Update Item</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/estimates/{est_id}/items/{item_id}</td><td>Delete Item</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/bid-estimates/by-lead/{lead_id}</td><td>Get Estimate By Lead</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/bid-estimates/{estimate_id}</td><td>Get Estimate</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bid-estimates/{estimate_id}/narrative</td><td>Draft Narrative</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bid-estimates/{estimate_id}/sections</td><td>Add Section</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/bid-sections/{section_id}</td><td>Update Section</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/bid-sections/{section_id}</td><td>Delete Section</td></tr></table></section>
+<section id="calculators"><h2>Calculators <span class="count">3</span></h2><p class="blurb">Saved trade-calculator runs filed against a project (concrete, block, framing, excavation, rebar, stairs, bid/cost, and the rest of the 14-calculator library).</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/calcs</td><td>List Calcs</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/calcs</td><td>Create Calc</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/calcs/{calc_id}</td><td>Delete Calc</td></tr></table></section>
+<section id="time-clock"><h2>Time Clock <span class="count">6</span></h2><p class="blurb">Crew time entries, with optional GPS stamp.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/timeclock</td><td>List Entries</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/timeclock/clock-in</td><td>Clock In</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/timeclock/clock-out</td><td>Clock Out</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/timeclock/open</td><td>Open Entries</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/timeclock/summary</td><td>Summary</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/timeclock/{entry_id}</td><td>Delete Entry</td></tr></table></section>
+<section id="approvals"><h2>Approvals <span class="count">3</span></h2><p class="blurb">The approvals queue — items submitted from the field, decided from the phone or the office.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/approvals</td><td>List Approvals</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/approvals/{approval_id}/approve</td><td>Approve</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/approvals/{approval_id}/reject</td><td>Reject</td></tr></table></section>
+<section id="tasks-and-punch-lists"><h2>Tasks &amp; Punch Lists <span class="count">8</span></h2><p class="blurb">Task lists and punch items tracked to completion.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/tasks</td><td>List Tasks</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/tasks</td><td>Create Task</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/tasks/{task_id}</td><td>Update Task</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/tasks/{task_id}</td><td>Delete Task</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/punchlist</td><td>List Punch</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/punchlist</td><td>Create Punch</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/punchlist/{item_id}</td><td>Update Punch</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/punchlist/{item_id}</td><td>Delete Punch</td></tr></table></section>
+<section id="ai-crew"><h2>AI Crew <span class="count">2</span></h2><p class="blurb">The AI office staff: the crew roles a user talks to, including the secretary and project-manager functions.</p><table><tr><td><span class="m get">GET</span></td><td class="path">/api/ai/crew/roles</td><td>List Roles</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/ai/crew/{role}/ask</td><td>Crew Ask</td></tr></table></section>
+
+  <h2 style="margin-top:48px;">Additional modules <span class="count">85 endpoints</span></h2>
+  <p class="blurb">The rest of the shipped surface — office, compliance, and back-office modules that
+  round out the product.</p>
+<section id="x-analytics-(operator)"><h2>Analytics (operator) <span class="count">1</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/admin/analytics/summary</td><td>Analytics Summary</td></tr></table></section>
+<section id="x-bid-leads"><h2>Bid Leads <span class="count">12</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/bidleads</td><td>List Leads</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bidleads</td><td>Create Lead</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bidleads/import-csv</td><td>Import Csv</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bidleads/ingest/run</td><td>Ingest Run</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/bidleads/sources</td><td>List Sources</td></tr>
+<tr><td><span class="m put">PUT</span></td><td class="path">/api/bidleads/sources/{source}</td><td>Upsert Source</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/bidleads/{lead_id}</td><td>Get Lead</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/bidleads/{lead_id}</td><td>Update Lead</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/bidleads/{lead_id}</td><td>Delete Lead</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bidleads/{lead_id}/convert</td><td>Convert To Project</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bidleads/{lead_id}/estimate</td><td>Create Estimate</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/bidleads/{lead_id}/pursue</td><td>Pursue Lead</td></tr></table></section>
+<section id="x-billing"><h2>Billing <span class="count">2</span></h2><table><tr><td><span class="m post">POST</span></td><td class="path">/api/billing/checkout</td><td>Create Checkout</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/billing/webhook</td><td>Stripe Webhook <span class="pub">public</span></td></tr></table></section>
+<section id="x-change-orders"><h2>Change Orders <span class="count">7</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/changeorders</td><td>List Change Orders</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/changeorders</td><td>Create Change Order</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/changeorders/{co_id}</td><td>Get Change Order</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/changeorders/{co_id}</td><td>Update Change Order</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/changeorders/{co_id}</td><td>Delete Change Order</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/changeorders/{co_id}/document</td><td>Change Order Document</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/changeorders/{co_id}/submit</td><td>Submit Change Order</td></tr></table></section>
+<section id="x-companies"><h2>Companies <span class="count">4</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/companies/me</td><td>Get My Company</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/companies/me</td><td>Update My Company</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/companies/me/profile</td><td>Get My Profile</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/companies/me/profile</td><td>Update My Profile</td></tr></table></section>
+<section id="x-contracts"><h2>Contracts <span class="count">6</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/contracts</td><td>List Contracts</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/contracts/draft</td><td>Draft Contract</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/contracts/templates</td><td>List Templates</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/contracts/{contract_id}</td><td>Get Contract</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/contracts/{contract_id}</td><td>Update Contract</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/contracts/{contract_id}</td><td>Delete Contract</td></tr></table></section>
+<section id="x-employees"><h2>Employees <span class="count">2</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/employees</td><td>List Employees</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/employees</td><td>Add Employee</td></tr></table></section>
+<section id="x-equipment"><h2>Equipment <span class="count">4</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/equipment</td><td>List Equipment</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/equipment</td><td>Add Equipment</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/equipment/{equipment_id}</td><td>Update Equipment</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/equipment/{equipment_id}</td><td>Delete Equipment</td></tr></table></section>
+<section id="x-hr"><h2>HR <span class="count">1</span></h2><table><tr><td><span class="m post">POST</span></td><td class="path">/api/hr/onboarding/draft</td><td>Draft Onboarding</td></tr></table></section>
+<section id="x-invoices"><h2>Invoices <span class="count">1</span></h2><table><tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/invoices/draft</td><td>Draft Invoice</td></tr></table></section>
+<section id="x-meetings"><h2>Meetings <span class="count">4</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/meetings</td><td>List Meetings</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/meetings</td><td>Create Meeting</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/meetings/{meeting_id}</td><td>Update Meeting</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/meetings/{meeting_id}</td><td>Delete Meeting</td></tr></table></section>
+<section id="x-3d-models"><h2>3D Models <span class="count">9</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/models3d/{model_id}/comments</td><td>List Comments</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/models3d/{model_id}/comments</td><td>Create Comment</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/models3d/{model_id}/comments/{comment_id}</td><td>Resolve Comment</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/models3d/{model_id}/comments/{comment_id}</td><td>Delete Comment</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/models3d</td><td>List Models</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/models3d</td><td>Create Model</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/models3d/{model_id}</td><td>Get Model</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/models3d/{model_id}</td><td>Update Model</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/models3d/{model_id}</td><td>Delete Model</td></tr></table></section>
+<section id="x-office"><h2>Office <span class="count">2</span></h2><table><tr><td><span class="m post">POST</span></td><td class="path">/api/office/ask</td><td>Ask</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/office/templates</td><td>List Templates</td></tr></table></section>
+<section id="x-onboarding"><h2>Onboarding <span class="count">1</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/onboarding/status</td><td>Onboarding Status</td></tr></table></section>
+<section id="x-payroll"><h2>Payroll <span class="count">1</span></h2><table><tr><td><span class="m post">POST</span></td><td class="path">/api/payroll/draft</td><td>Draft Payroll</td></tr></table></section>
+<section id="x-permits"><h2>Permits <span class="count">12</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/permits</td><td>List Permits</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/permits</td><td>Create Permit</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/permits/expiring</td><td>Expiring Permits</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/permits/requirements</td><td>Get Requirements</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/permits/{permit_id}</td><td>Get Permit</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/permits/{permit_id}</td><td>Update Permit</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/permits/{permit_id}</td><td>Delete Permit</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/permits/{permit_id}/apply-template</td><td>Apply Template</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/permits/{permit_id}/checklist</td><td>Get Checklist</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/permits/{permit_id}/checklist</td><td>Add Checklist Item</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/permits/{permit_id}/checklist/{item_id}</td><td>Toggle Checklist Item</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/permits/{permit_id}/documents</td><td>Link Document</td></tr></table></section>
+<section id="x-rfis"><h2>RFIs <span class="count">3</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/rfis</td><td>List Rfis</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/rfis</td><td>Create Rfi</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/rfis/{rfi_id}</td><td>Update Rfi</td></tr></table></section>
+<section id="x-safety"><h2>Safety <span class="count">2</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/safety</td><td>List Safety Logs</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/safety</td><td>Add Safety Log</td></tr></table></section>
+<section id="x-scheduling"><h2>Scheduling <span class="count">1</span></h2><table><tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/schedule/draft</td><td>Draft Schedule</td></tr></table></section>
+<section id="x-sharing"><h2>Sharing <span class="count">4</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/report.pdf</td><td>Project Report Pdf</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/share-links</td><td>Create Share Link</td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/share-links</td><td>List Share Links</td></tr>
+<tr><td><span class="m del">DELETE</span></td><td class="path">/api/projects/{project_id}/share-links/{link_id}</td><td>Revoke Share Link</td></tr></table></section>
+<section id="x-sharing-(public-links)"><h2>Sharing (public links) <span class="count">2</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/s/{token}</td><td>Public Share <span class="pub">public</span></td></tr>
+<tr><td><span class="m get">GET</span></td><td class="path">/s/{token}/photo/{document_id}</td><td>Public Share Photo <span class="pub">public</span></td></tr></table></section>
+<section id="x-submittals"><h2>Submittals <span class="count">3</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/projects/{project_id}/submittals</td><td>List Submittals</td></tr>
+<tr><td><span class="m post">POST</span></td><td class="path">/api/projects/{project_id}/submittals</td><td>Create Submittal</td></tr>
+<tr><td><span class="m patch">PATCH</span></td><td class="path">/api/projects/{project_id}/submittals/{submittal_id}</td><td>Update Submittal</td></tr></table></section>
+<section id="x-system"><h2>System <span class="count">1</span></h2><table><tr><td><span class="m get">GET</span></td><td class="path">/api/health</td><td>Health <span class="pub">public</span></td></tr></table></section>
+</main>
+<footer>ContractorOS (W.B. Construction LLC) · Built by Lee Brower, master carpenter &amp; superintendent ·
+<a href="index.html">Store</a></footer>
+</body>
+</html>
